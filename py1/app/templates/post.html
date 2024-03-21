@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="my-5">{{ post.title }}</h1>
+    <h4 class="my-5">{{ post.author }}, {{post.date.strftime('%d.%m.%Y')}}</h4>
+    <div class="container">
+        <img class="card-img-top" src="{{ url_for('static', filename='images/' + post.image_id) }}" alt="Card image cap">
+    </div>
+    <p class="card-text">
+        {{post.text}}
+    </p>
+
+    <div class="col-md-12">
+        <div class="panel">
+            <div class="panel-body">
+                <textarea class="form-control" rows="2" placeholder="Добавьте Ваш комментарий"></textarea>
+                <div class="mar-top clearfix">
+                    <button class="btn btn-sm btn-primary pull-right" type="submit"><i class="fa fa-pencil fa-fw"></i> Добавить</button>
+                    <a class="btn btn-trans btn-icon fa fa-video-camera add-tooltip" href="#"></a>
+                    <a class="btn btn-trans btn-icon fa fa-camera add-tooltip" href="#"></a>
+                    <a class="btn btn-trans btn-icon fa fa-file add-tooltip" href="#"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container col">
+        {% for comment in post.comments %}
+            <div class="d-flex">
+                <div class="flex-grow-1 ms-3">
+                    <h5>{{ comment['author'] }}</h5>
+                    <p>{{ comment['text'] }}</p>
+                    {% if comment["replies"]%}
+                        {% for com in comment["replies"] %}
+                            <div class="d-flex">
+                                <div class="flex-grow-1 ms-3">
+                                    <h5>{{ com['author'] }}</h5>
+                                    <p>{{ com['text'] }}</p>
+                                </div>
+                            </div>        
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>        
+        {% endfor %}
+    </div>
+{% endblock %}
