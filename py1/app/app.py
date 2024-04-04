@@ -3,11 +3,26 @@ from flask import Flask, render_template
 from faker import Faker
 from flask import request
 from flask import make_response
+from flask import redirect, url_for, request, session
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 
 fake = Faker()
 
 app = Flask(__name__)
 application = app
+app.secret_key = 'Secret_key'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+users = {'user': {'password': 'qwerty'}}
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
 
 images_ids = ['7d4e9175-95ea-4c5f-8be5-92a6b708bb3c',
               '2d2ab7df-cdbc-48a8-a936-35bba702def5',
@@ -37,8 +52,54 @@ def generate_post(i):
 posts_list = sorted([generate_post(i) for i in range(5)], key=lambda p: p['date'], reverse=True)
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def index1lb():
+    return render_template('index1lb.html')
+
+@app.route('/2lb')
+def index2lb():
+    return render_template('index2lb.html')
+
+@app.route('/Home')
+def indexHome():
+    return render_template('indexHome.html')
+
+@app.route('/visits')
+def visits():
+    if 'visits' in session:
+        session['visits'] += 1
+    else:
+        session['visits'] = 1
+    return 'Number of visits: {}'.format(session['visits'])
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        remember = True if 'remember' in request.form else False
+
+        if username in users and users[username]['password'] == password:
+            user = User(username)
+            login_user(user, remember=remember)
+            return redirect(url_for('secret'))
+        else:
+            return 'Invalid username or password'
+
+    return render_template('login.html')
+
+@app.route('/secret')
+#@login_required
+def secret():
+    return render_template('secret.html')
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('indexHome'))
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for('login'))
 
 @app.route('/url')
 def url():

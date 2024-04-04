@@ -1,0 +1,21 @@
+{% extends 'baseHome.html' %}
+
+{% block content %}
+    <h1>Вход</h1>
+    <form action="/login" method="POST">
+        <label for="username">Логин:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="remember">Запомнить меня:</label>
+        <input type="checkbox" id="remember" name="remember"><br><br>
+
+        <button type="submit">Войти</button>
+    </form>
+
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+{%endblock%}

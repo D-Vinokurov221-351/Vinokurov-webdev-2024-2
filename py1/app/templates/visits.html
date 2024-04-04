@@ -1,0 +1,6 @@
+{% extends 'baseHome.html' %}
+
+{% block content %}
+    <h1>Счётчик посещений</h1>
+    <p>Вы посетили эту страницу {{ session['visits'] }} раз(а).</p>
+{% endblock %}
